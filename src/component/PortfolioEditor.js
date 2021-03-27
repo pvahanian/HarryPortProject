@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+
 import { Button, Form, Header } from "semantic-ui-react";
 import axios from "axios";
-import "../App.css";
 
+import "../App.css";
 import { currentMonth, nextMonth } from "../consts/constants";
+import calculateNewValues from './utils/calculateNewValues.js' 
 
 const PortfolioEditor = (props) => {
   const { sheetsData, setSheetsData } = props;
@@ -31,105 +33,7 @@ const PortfolioEditor = (props) => {
     Array.from(document.querySelectorAll("input")).forEach(
       (input) => (input.value = "")
     );
-    calculateNewValues();
-
-    function calculateNewValues() {
-      let totalProfit = Number(endingBalance) - startingValue;
-      let clients = sheetsData;
-      let requestArray = [];
-      let sureFiresCut = 0;
-      let atALossBalance = Number(endingBalance);
-
-      // Use Total Profit to determine if this needs to be a loss calculation or a gain.
-      //This will basically just take in all clients values and reduce them without surefire fee.
-      if (totalProfit > 0) {
-        for (let i = 0; i < clients.length; i++) {
-          //Calculate regular client
-          let clientStartingValue = Number(clients[i].startingBalance);
-
-          let clientsCut =
-            (clientStartingValue / startingValue) *
-            totalProfit *
-            (1 - Number(clients[i].SureFireFee));
-          sureFiresCut +=
-            (clientStartingValue / startingValue) * totalProfit - clientsCut;
-
-          let percentGained = clientsCut / clientStartingValue;
-          clientsCut += clientStartingValue;
-          requestArray.push(
-            axios.put(
-              `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`,
-              {
-                condition: { Id: clients[i].Id },
-                set: {
-                  NewNetBalance: clientsCut,
-                  PercentageGain: percentGained,
-                },
-              }
-            )
-          );
-        }
-        axios.all(requestArray).then(() => {
-          axios
-            .get(
-              `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}?search={"Id":"0"}`
-            )
-            .then((res) => {
-              sureFiresCut += Number(res.data[0].NewNetBalance);
-              axios
-                .put(
-                  `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`,
-                  {
-                    condition: { Id: "0" },
-                    set: {
-                      NewNetBalance: sureFiresCut,
-                    },
-                  }
-                )
-                .then((need) => {
-                  axios
-                    .get(
-                      `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`
-                    )
-                    .then((response) => {
-                      setSheetsData(response.data);
-                      setIsLoading(false);
-                    });
-                });
-            });
-        });
-      } else {
-        for (let i = 0; i < clients.length; i++) {
-          // Go through each client
-          //Calculate regular client
-          let clientStartingValue = Number(clients[i].startingBalance); // Gets their starting balance for the month
-          let clientsCut =(clientStartingValue / startingValue) * atALossBalance; // Sees how much of the portfolio they are entitled too
-          let percentageLoss = (1 - clientsCut/clientStartingValue) * -1; //Calculates the negative value of the loss in %
-          requestArray.push(
-            axios.put(
-              `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`,
-              {
-                condition: { Id: clients[i].Id },
-                set: {
-                  NewNetBalance: clientsCut,
-                  PercentageGain: percentageLoss,
-                },
-              }
-            )
-          );
-        }
-        axios.all(requestArray).then(() => {
-          axios
-            .get(
-              `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`
-            )
-            .then((response) => {
-              setSheetsData(response.data);
-              setIsLoading(false);
-            });
-        });
-      }
-    }
+    calculateNewValues(endingBalance,startingValue,sheetsData,setSheetsData,setIsLoading,currentMonth);
   };
 
   const handleSubmitValues = (getData) => {
@@ -147,9 +51,7 @@ const PortfolioEditor = (props) => {
       const timeStamp = new Date(Date.now()).toDateString();
       let wholeTable = document.getElementsByClassName("testforDommy");
       let postArray= []
-      let dataSent = false
-
-
+   
       for (let i = 1; i < wholeTable[0].rows.length; i++) {
         let row = wholeTable[0].rows[i];
         const enrollmentDate= row.children[0].innerText
@@ -197,7 +99,6 @@ const PortfolioEditor = (props) => {
           console.log(postArray[index],"index",index)
         }
       }
-     
       getData();
       setEndingMonthValue(portfolioSum);
     }
@@ -224,7 +125,6 @@ const PortfolioEditor = (props) => {
           });
         }
       });
-    console.log(newSheetStuff);
   }
 
   return (

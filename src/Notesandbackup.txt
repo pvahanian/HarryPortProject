@@ -363,3 +363,169 @@ render={props =>
           //     sortedSheet.unshift(unSortedSheet[i])
           //   }
           // }
+
+          // function BuddysWorld({ client }) {
+//   const [
+//     withdrawalEditing,
+//     newWithdrawal,
+//     setNewWithdrawal,
+//     withDrawlHandler,
+//   ] = useTableInput();
+//   const [
+//     depositEditing,
+//     newDeposit,
+//     setNewDeposit,
+//     depositHandler,
+//   ] = useTableInput();
+
+//   return (
+//     <React.Fragment key={client.Id}>
+//       <Table.Row className={client.Id}>
+//         <Table.Cell>{client.Month}</Table.Cell>
+//         <Table.Cell>
+//           <h4>{client.clientName}</h4>
+//         </Table.Cell>
+//         <Table.Cell>$ {Number(client.startingBalance).toFixed(2)} </Table.Cell>
+//         <Table.Cell>{client.SureFireFee} </Table.Cell>
+//         <Table.Cell>$ {Number(client.NewNetBalance).toFixed(2)} </Table.Cell>
+//         <Table.Cell>{client.PercentageGain} </Table.Cell>
+//         <Table.Cell>
+//           {withdrawalEditing ? (
+//             <input
+//               className="withdrawalinput"
+//               onChange={(e) => setNewWithdrawal(e.target.value)}
+//               name={client.Id}
+//               value={newWithdrawal}
+//               type="number"
+//             />
+//           ) : (
+//             Number(newWithdrawal) + Number(client.Withdrawal) + " "
+//           )}
+//           <button className="negative ui button" onClick={withDrawlHandler}>
+//             {withdrawalEditing ? "Confirm" : "Edit"}
+//           </button>
+//         </Table.Cell>
+//         <Table.Cell>
+//           {depositEditing ? (
+//             <input
+//               className="depositinput"
+//               onChange={(e) => setNewDeposit(e.target.value)}
+//               value={newDeposit}
+//               type="number"
+//             />
+//           ) : (
+//             Number(newDeposit) + Number(client.Deposit) + " "
+//           )}
+//           <button  className="positive ui button"  onClick={depositHandler}>
+//             {depositEditing ? "Confirm" : "Edit"}
+//           </button>
+//         </Table.Cell>
+//         <Table.Cell>
+//           ${" "}
+//           {Number(client.NewNetBalance).toFixed(2) -
+//             Number(newWithdrawal) +
+//             Number(newDeposit)}
+//         </Table.Cell>
+//       </Table.Row>
+//     </React.Fragment>
+//   );
+// }
+
+
+// function calculateNewValues() {
+    //   let totalProfit = Number(endingBalance) - startingValue;
+    //   let clients = sheetsData;
+    //   let requestArray = [];
+    //   let sureFiresCut = 0;
+    //   let atALossBalance = Number(endingBalance);
+
+    //   // Use Total Profit to determine if this needs to be a loss calculation or a gain.
+    //   //This will basically just take in all clients values and reduce them without surefire fee.
+    //   if (totalProfit > 0) {
+    //     for (let i = 0; i < clients.length; i++) {
+    //       //Calculate regular client
+    //       let clientStartingValue = Number(clients[i].startingBalance);
+
+    //       let clientsCut =
+    //         (clientStartingValue / startingValue) *
+    //         totalProfit *
+    //         (1 - Number(clients[i].SureFireFee));
+    //       sureFiresCut +=
+    //         (clientStartingValue / startingValue) * totalProfit - clientsCut;
+
+    //       let percentGained = clientsCut / clientStartingValue;
+    //       clientsCut += clientStartingValue;
+    //       requestArray.push(
+    //         axios.put(
+    //           `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`,
+    //           {
+    //             condition: { Id: clients[i].Id },
+    //             set: {
+    //               NewNetBalance: clientsCut,
+    //               PercentageGain: percentGained,
+    //             },
+    //           }
+    //         )
+    //       );
+    //     }
+    //     axios.all(requestArray).then(() => {
+    //       axios
+    //         .get(
+    //           `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}?search={"Id":"0"}`
+    //         )
+    //         .then((res) => {
+    //           sureFiresCut += Number(res.data[0].NewNetBalance);
+    //           axios
+    //             .put(
+    //               `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`,
+    //               {
+    //                 condition: { Id: "0" },
+    //                 set: {
+    //                   NewNetBalance: sureFiresCut,
+    //                 },
+    //               }
+    //             )
+    //             .then((need) => {
+    //               axios
+    //                 .get(
+    //                   `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`
+    //                 )
+    //                 .then((response) => {
+    //                   setSheetsData(response.data);
+    //                   setIsLoading(false);
+    //                 });
+    //             });
+    //         });
+    //     });
+    //   } else {
+    //     for (let i = 0; i < clients.length; i++) {
+    //       // Go through each client
+    //       //Calculate regular client
+    //       let clientStartingValue = Number(clients[i].startingBalance); // Gets their starting balance for the month
+    //       let clientsCut =(clientStartingValue / startingValue) * atALossBalance; // Sees how much of the portfolio they are entitled too
+    //       let percentageLoss = (1 - clientsCut/clientStartingValue) * -1; //Calculates the negative value of the loss in %
+    //       requestArray.push(
+    //         axios.put(
+    //           `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`,
+    //           {
+    //             condition: { Id: clients[i].Id },
+    //             set: {
+    //               NewNetBalance: clientsCut,
+    //               PercentageGain: percentageLoss,
+    //             },
+    //           }
+    //         )
+    //       );
+    //     }
+    //     axios.all(requestArray).then(() => {
+    //       axios
+    //         .get(
+    //           `https://api.steinhq.com/v1/storages/60514b53f62b6004b3eb6770/${currentMonth}`
+    //         )
+    //         .then((response) => {
+    //           setSheetsData(response.data);
+    //           setIsLoading(false);
+    //         });
+    //     });
+    //   }
+    // }

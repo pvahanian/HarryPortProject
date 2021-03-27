@@ -98,14 +98,6 @@ const AddClient = () => {
             onChange={(e) => setSureFireFee(e.target.value)}
           />
         </Form.Field>
-        {/* <Form.Field required>  // Add once you make this a drop down with default values being monthsyear together no space
-          <label>Month to Add Client</label>
-          <Input
-            type="string"
-            placeholder="Example April2021"
-            onChange={(e) => setMonthToAdd(e.target.value)}
-          />
-        </Form.Field> */}
         <Button color="blue" type="button" onClick={handleSubmitNewClient}>
           Add New Client
         </Button>
